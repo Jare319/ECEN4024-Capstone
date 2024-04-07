@@ -8,7 +8,7 @@
     "net8.0": []
   },
   "packageFolders": {
-    "C:\\Users\\jare\\.nuget\\packages\\": {}
+    "C:\\Users\\jarre\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
@@ -16,11 +16,11 @@
       "projectUniqueName": "C:\\Everything\\ECEN4024-Capstone\\OceanMotion Control Center\\OceanMotion Control Center.csproj",
       "projectName": "OceanMotion Control Center",
       "projectPath": "C:\\Everything\\ECEN4024-Capstone\\OceanMotion Control Center\\OceanMotion Control Center.csproj",
-      "packagesPath": "C:\\Users\\jare\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\jarre\\.nuget\\packages\\",
       "outputPath": "C:\\Everything\\ECEN4024-Capstone\\OceanMotion Control Center\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\jare\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\jarre\\AppData\\Roaming\\NuGet\\NuGet.Config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
@@ -64,7 +64,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
