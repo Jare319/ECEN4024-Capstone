@@ -42,7 +42,7 @@ public static class Program
                 return "Command1 received";
             case "ProcessInput":
                 FileHandler fh = new FileHandler();
-                ValidationParameters valParams = new ValidationParameters(100,10,10,10);
+                ValidationParameters valParams = new ValidationParameters(100,0,10,0.1);
                 int status = fh.ValidateFile(args[0],valParams);
                 return "File processing returned status:" + status;
             case "Exit":
