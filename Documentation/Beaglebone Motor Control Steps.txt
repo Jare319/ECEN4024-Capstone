@@ -1,0 +1,29 @@
+Steps to use the Beaglebone and T6 Stepper driver during testing phase:
+
+1. Connect Beaglebone to a computer via the MicroUSB-USB cable. This is both power the Beaglebone, and establish a RNDIS device on you laptop. This allows you to connect to
+the Beaglebone as if you were connected via ethernet.
+
+2. Connect the Beaglebone to the stepper driver using the ethernet cable. The RJ45 connector will be inserted into either port CN4 or CN5 on the stepper driver. The other end
+will be wired to the Beaglebone like so:
+Orange/White: RS485 A
+Solid Orange: RS485 B
+Solid Brown: GND
+
+3. Open PuTTY or other SSH application of your choice.
+
+4. Connect to the Beaglebone with the IP: 192.168.7.2
+
+5. You will be prompted to sign-in. Use:
+Name: debian
+Pass: temppwd
+
+6. In the directory /home/debian (This is currently the default directory) you will see several programs and scripts I've been experimenting with. Run:
+./pinconfig.sh
+python Writer.py
+
+This configures the UART4 port on the Beaglebone, and starts a script to send commands to the stepper driver. The stepper will need to be set up and powered on from this point.
+
+7. Send commands to the driver in the following format: XX XX XX XX XX XX XX XX
+Each pair of symbols represents a byte using it's hexadecimal form. Examples of these byte strings can be found starting on page 132 of the full documentation.
+
+8. Exit the program by typing "exit"
