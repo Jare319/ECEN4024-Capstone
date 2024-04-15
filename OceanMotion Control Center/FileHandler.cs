@@ -8,8 +8,7 @@ public class FileHandler {
     //private StreamWriter sw; for writing to create
 
 
-    public int ValidateFile(String path, double maxHeight, double minHeight, double maxVelocity, double minTimeStep) {
-        ValidationParameters valParams = new ValidationParameters(maxHeight,minHeight,maxVelocity, minTimeStep);
+    public int ValidateFile(String path, ValidationParameters valParams) {
         return ReadFile(path, valParams);
     }
 

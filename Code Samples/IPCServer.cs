@@ -7,7 +7,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        string pipeName = "MyNamedPipe";
+        string pipeName = "OceanMotion";
         
         using (NamedPipeServerStream pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut))
         {
