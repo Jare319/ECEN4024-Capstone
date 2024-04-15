@@ -1,0 +1,11 @@
+01 06 20 09 00 01 93 c8 - Servo Enable
+01 06 60 14 00 01 16 0e - Set homing torque to 1% of max
+01 06 60 0a 00 0f f7 cc - Set homing mode to torque, positive direction, go to home position after
+01 06 60 0f 00 32 26 1c - Set homing high speed to 50rpm
+01 06 60 10 00 0a 16 08 - Set homing low speed to 10rpm
+01 06 60 02 00 20 37 d2 - Trigger homing process
+01 06 60 02 00 40 37 fa - Apply internal E-stop signal
+01 06 20 09 00 00 52 08 - Servo disable
+
+01 03 60 2c 00 02 1b c2 - Read motor position (high)
+01 03 60 2d 00 02 4a 02 - Read motor position (low)
