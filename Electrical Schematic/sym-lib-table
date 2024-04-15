@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "OceanMotion")(type "KiCad")(uri "${KIPRJMOD}/OceanMotion.kicad_sym")(options "")(descr ""))
+)
