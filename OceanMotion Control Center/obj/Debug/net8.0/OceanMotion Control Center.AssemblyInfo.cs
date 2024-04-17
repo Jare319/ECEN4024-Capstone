@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OceanMotion Control Center")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+57599acc740670f113cf13f5a2430ac87d6a1ae3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f0b5e594e1b9751e4202e86b9b13c7ff9595ffe")]
 [assembly: System.Reflection.AssemblyProductAttribute("OceanMotion Control Center")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OceanMotion Control Center")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
