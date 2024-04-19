@@ -14,7 +14,7 @@ TRG_HOM = b'\x06\x60\x02\x00\x20'     # Trigger path_0 motion (Homing mode)
 crc = Calculator(Crc16.MODBUS,optimized=True)
 
 try:
-    ser = serial.Serial('/dev/uart/bone/4',115200)
+    ser = serial.Serial('/dev/bone/uart/4',115200)
     ser.close()
     ser.open()
 except:
