@@ -10,7 +10,6 @@ SRV_RDY = b'\x03\x02\x00\x00'       # Servo status indicating it is ready for ad
 TRG_P0 = b'\x06\x60\x02\x00\x10'    # Trigger path_0 motion (Movement mode)
 TRG_HOM = b'\x06\x60\x02\x00\x20'   # Trigger path_0 motion (Homing mode)
 
-
 crc = Calculator(Crc16.MODBUS,optimized=True)
 
 try:
@@ -19,74 +18,34 @@ try:
     ser.open()
 except:
     print("No Serial Port Found...")
-    #exit()
+    exit(-1)
 
-def SendSingleCommand(command, retries: int): # Sends a single command, used for correcting errors.
-    for i in range(retries):
+def SendSingleCommand(command: bytes, retries:int): # Sends a single command, used for correcting errors.
+    attempt = 0
+    while attempt < retries:
         ser.write(command)
-        time.sleep(0.001)
+        time.sleep(0.002)
         r = ser.read_all()
-        if command == r:
+        time.sleep(0.002)
+        if r == command:
             return
-        time.sleep(0.001)
+        else:
+            print("Transmission error detected...\nCommand: "+str(command)+"\nResponse: "+str(r))
+            attempt += 1
     print("Error could not be handled. Halting actuators...")
-    SendQuadCommand(ESTOP)
+    SendQuadCommand(ESTOP) # Yes, in theory this could infinitely recurse
     exit(-69)
 
-def SendQuadCommand(command): # Adjusts a command to send to all 4 actuators (adr 1-4) with a period of 2ms
-    m1 = bytearray([0x01])
-    m1.extend(command)
-    m1.extend(crc.checksum(m1).to_bytes(2,'little'))
-    m1 = bytes(m1)
-    ser.write(m1)
-    time.sleep(0.05)
-    r1 = ser.read_all()
-    time.sleep(0.05)
-    #if m1 != r1:
-        #print("Command validation error corrected, continuing execution...")
-        #print(m1)
-        #print(r1)
-        #SendSingleCommand(m1,2)
-    m2 = bytearray([0x02])
-    m2.extend(command)
-    m2.extend(crc.checksum(m2).to_bytes(2,'little'))
-    m2 = bytes(m2)
-    ser.write(m2)
-    time.sleep(0.05)
-    r2 = ser.read_all()
-    time.sleep(0.05)
-    #if m2 != r2:
-        #SendSingleCommand(m2,2)
-        #print("Command validation error corrected, continuing execution...")
-        #print(m2)
-        #print(r2)
-    m3 = bytearray([0x03])
-    m3.extend(command)
-    m3.extend(crc.checksum(m3).to_bytes(2,'little'))
-    m3 = bytes(m3)
-    ser.write(m3)
-    time.sleep(0.05)
-    r3 = ser.read_all()
-    time.sleep(0.05)
-    #if m3 != r3:
-        #SendSingleCommand(m3,2)
-        #print("Command validation error corrected, continuing execution...")
-        #print(m3)
-        #print(r3)
-    m4 = bytearray([0x04])
-    m4.extend(command)
-    m4.extend(crc.checksum(m4).to_bytes(2,'little'))
-    m4 = bytes(m4)
-    ser.write(m4)
-    time.sleep(0.05)
-    r4 = ser.read_all()
-    time.sleep(0.05)
-    #if m4 != r4:
-        #SendSingleCommand(m4,2)
-        #print("Command validation error corrected, continuing execution...")
-        #print(m4)
-        #print(r4)
-    time.sleep(0.05)
+def BuildCommand(command:bytes, addr:int) -> bytes:
+    m = addr.to_bytes(1,'big')+command
+    m = m+crc.checksum(m).to_bytes(2,'little')
+    return bytes(m)
+
+def SendQuadCommand(command,retries=2): # Adjusts a command to send to all 4 actuators (adr 1-4) with a period of 2ms
+    SendSingleCommand(BuildCommand(command,1),retries)
+    SendSingleCommand(BuildCommand(command,2),retries)
+    SendSingleCommand(BuildCommand(command,3),retries)
+    SendSingleCommand(BuildCommand(command,4),retries)
 
 def SendQuadRead(command): # Adjusts a read request to send to all 4 actuators (adr 1-4) with a period of 2ms
     m1 = bytearray([0x01])
@@ -143,7 +102,7 @@ def SetPosition(height: int, speed: int):
     SendQuadCommand(b'\x06\x62\x03'+speed)        # Set speed in rpm
     SendQuadCommand(b'\x06\x62\x04\x00\x32')      # Set acceleration to 50ms/1000rpm
     SendQuadCommand(b'\x06\x62\x05\x00\x32')      # Set deceleration to 50ms/1000rpm
-    SendQuadCommand(TRG_P1)                       # Trigger path_0 motion
+    SendQuadCommand(TRG_P0)                       # Trigger path_0 motion
     WaitTillReady()
     #time.sleep(10)                               # Wait till all actuators reach given position
     SendQuadCommand(ESTOP)                        # Estop signal
@@ -153,14 +112,10 @@ def RunPositionSequence(positions: list, period: int):
     SendQuadCommand(SRV_ENBL)                     # Enable servos
     SendQuadCommand(b'\x06\x62\x00\x00\x01')      # Set absolute positioning mode.
     vel = (positions[0]*24)/period
-    #accel = int(((period*1000.0)/vel)*1000.0).to_bytes(2,'big')
-    accel = (1000).to_bytes(2,'big')
+    accel = int(((period*1000.0)/vel)*1000.0).to_bytes(2,'big')
+    #accel = (1000).to_bytes(2,'big')
     vel = int(vel).to_bytes(2,'big')
     pos = int((positions[0]/3)*10000).to_bytes(4,'big')
-    print("Position 1...")
-    print(pos)
-    #print(pos[:-2])
-    #print(pos[2:])
     SendQuadCommand(b'\x06\x62\x01'+pos[:-2])   # Set pos in pulses (high 2 bytes)
     SendQuadCommand(b'\x06\x62\x02'+pos[2:])    # Set pos in pulses (low 2 bytes)
     SendQuadCommand(b'\x06\x62\x03'+vel)
@@ -170,22 +125,15 @@ def RunPositionSequence(positions: list, period: int):
     time.sleep(period/2.0)
     for i in range(1,len(positions)):
         v = int((abs(positions[i]-positions[i-1])*24)/period).to_bytes(2,'big')
-        print('Velocity: '+str(v))
-        print('Position '+str(i+1)+"...")
         p = int(((positions[i]/3)*10000)).to_bytes(4,'big')
-        #print(v)
-        print(p)
         SendQuadCommand(b'\x06\x62\x01'+p[:-2])   # Set pos in pulses (high 2 bytes)
         SendQuadCommand(b'\x06\x62\x02'+p[2:])    # Set pos in pulses (low 2 bytes)
         SendQuadCommand(b'\x06\x62\x03'+v)
         SendQuadCommand(TRG_P0)                   # Trigger path_0 motion
-        #WaitTillReady()                          # Wait till all actuators reach given position
         time.sleep(period/2.0)
     WaitTillReady()
-    #time.sleep(period)
     SendQuadCommand(ESTOP)                        # Estop signal
     SendQuadCommand(SRV_DSBL)                     # Disable servos
-
 
 def WaitTillReady():
     while True:
