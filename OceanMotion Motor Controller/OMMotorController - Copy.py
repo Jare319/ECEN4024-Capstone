@@ -119,13 +119,12 @@ def RunPositionSequence(positions: list, period: int):
     SendQuadCommand(b'\x06\x62\x02'+pos[2:])      # Set pos in pulses (low 2 bytes)
     SendQuadCommand(b'\x06\x62\x03'+vel)
     SendQuadCommand(b'\x06\x62\x04\x00\x32')      # Set acceleration to 50ms/1000rpm
-    SendQuadCommand(b'\x06\x62\x05\xff\xff')      # Set deceleration to 1000ms/1000rpm
+    SendQuadCommand(b'\x06\x62\x05\x27\x10')      # Set deceleration to 1000ms/1000rpm
     SendQuadCommand(TRG_P0)  
     time.sleep(period)
     for i in range(1,len(positions)):
         v = int((abs(positions[i]-positions[i-1])*30)/period).to_bytes(2,'big')
         p = int(((positions[i]/3)*10000)).to_bytes(4,'big')
-        print(v)
         SendQuadCommand(b'\x06\x62\x01'+p[:-2])   # Set pos in pulses (high 2 bytes)
         SendQuadCommand(b'\x06\x62\x02'+p[2:])    # Set pos in pulses (low 2 bytes)
         SendQuadCommand(b'\x06\x62\x03'+v)
@@ -149,4 +148,4 @@ RunHomingSequence()
 time.sleep(3)
 print("Positioning...")
 #SetPosition(300, 600)
-RunPositionSequence([1,3,5,7,10,13,17,21,25,30,35,41,48,54],0.01)
+RunPositionSequence([],5)
